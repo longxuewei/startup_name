@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Welcome to Flutter',
-
+      theme: new ThemeData(primaryColor: Colors.black),
       home: new RandomWords(),
 
 //      home: Scaffold(
@@ -90,6 +90,35 @@ class RandomWordsState extends State<RandomWords> {
     );
   }
 
+  void _pushSaved() {
+    Navigator
+        .of(context)
+        .push(new MaterialPageRoute<void>(builder: (BuildContext context) {
+      final Iterable<ListTile> tiles = _savedWords.map((WordPair pair) {
+        return new ListTile(
+          title: new Text(
+            pair.asPascalCase,
+            style: _textStyle,
+          ),
+        );
+      });
+      final List<Widget> divided = ListTile
+          .divideTiles(
+            context: context,
+            tiles: tiles,
+          )
+          .toList();
+
+      return new Scaffold(
+        // 新增 6 行代码开始 ...
+        appBar: new AppBar(
+          title: const Text('Saved Suggestions'),
+        ),
+        body: new ListView(children: divided),
+      ); // ... 新增代码段结束.
+    }));
+  }
+
   @override
   Widget build(BuildContext context) {
 //    final WordPair pair = WordPair.random();
@@ -98,6 +127,9 @@ class RandomWordsState extends State<RandomWords> {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text("随机生成单词"),
+        actions: <Widget>[
+          new IconButton(icon: const Icon(Icons.list), onPressed: _pushSaved)
+        ],
       ),
       body: _buildListView(),
     );
