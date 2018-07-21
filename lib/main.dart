@@ -44,10 +44,13 @@ class RandomWordsState extends State<RandomWords> {
   //字体格式
   final TextStyle _textStyle = const TextStyle(fontSize: 18.0);
 
+  //使用Set集合是因为  Set 相比 List 不允许重复的值
+  final Set<WordPair> _savedWords = new Set<WordPair>();
+
   //定义一个函数，构建出一个ListView
   Widget _buildListView() {
     return ListView.builder(
-      padding: const EdgeInsets.all(16.0), //内边距 padding
+      padding: const EdgeInsets.all(1.0), //内边距 padding
       itemBuilder: (BuildContext _context, int i) {
         if (i.isOdd) {
           return new Divider();
@@ -63,7 +66,28 @@ class RandomWordsState extends State<RandomWords> {
   }
 
   Widget _buildRow(WordPair word) {
-    return new ListTile(title: Text(word.asPascalCase, style: _textStyle));
+    //是否已经存储在了Saved集合里面
+    final bool isSaved = _savedWords.contains(word);
+
+    return new ListTile(
+      title: Text(word.asPascalCase, style: _textStyle),
+
+      //增加了一个图标在尾部
+      trailing: new Icon(
+        isSaved ? Icons.favorite : Icons.favorite_border,
+        color: isSaved ? Colors.red : null,
+      ),
+
+      onTap: () {
+        setState(() {
+          if (isSaved) {
+            _savedWords.remove(word);
+          } else {
+            _savedWords.add(word);
+          }
+        });
+      },
+    );
   }
 
   @override
